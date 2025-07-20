@@ -79,6 +79,7 @@
         repo: https://github.com/input-output-hk/libsodium
         dest: /tmp/libsodium
         version: dbb48cc
+        force: yes
 
     - name: Build and install libsodium
       shell: |
