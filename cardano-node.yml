@@ -43,12 +43,14 @@
       args:
         chdir: "{{ user_home }}/git/cardano-node"
         executable: /bin/bash
+      become: false
 
     - name: Cabal build all
       shell: cabal build all
       args:
         chdir: "{{ user_home }}/git/cardano-node"
         executable: /bin/bash
+      become: false
 
     - name: Copy cardano-node binary to /usr/local/bin
       shell: cp -p "$(./scripts/bin-path.sh cardano-node)" /usr/local/bin/cardano-node
