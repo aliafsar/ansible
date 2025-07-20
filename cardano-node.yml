@@ -6,7 +6,7 @@
 
   tasks:
     - name: Remove libsodium-dev if present
-      # To ensure that development headers for the libsodium cryptographic library are NOT installed
+      # To ensure that development headers for the libsodium cryptographic library are NOT install
       apt:
         name: libsodium-dev
         state: absent
