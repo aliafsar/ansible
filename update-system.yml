@@ -47,7 +47,7 @@
         curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 sh >> {{ log_file }} 2>&1
       args:
         executable: /bin/bash
-        creates: "{{ ansible_env.HOME }}/.ghcup"
+        creates: "{{ user_home }}/.ghcup"
 
     - name: Source .bashrc to update PATH
       shell: source ~/.bashrc
@@ -55,22 +55,22 @@
         executable: /bin/bash
 
     - name: Install GHC
-      shell: "{{ ansible_env.HOME }}/.ghcup/bin/ghcup install ghc {{ ghc_version }} >> {{ log_file }} 2>&1"
+      shell: "{{ user_home }}/.ghcup/bin/ghcup install ghc {{ ghc_version }} >> {{ log_file }} 2>&1"
       args:
         executable: /bin/bash
 
     - name: Set GHC as default
-      shell: "{{ ansible_env.HOME }}/.ghcup/bin/ghcup set ghc {{ ghc_version }} >> {{ log_file }} 2>&1"
+      shell: "{{ user_home }}/.ghcup/bin/ghcup set ghc {{ ghc_version }} >> {{ log_file }} 2>&1"
       args:
         executable: /bin/bash
 
     - name: Install Cabal
-      shell: "{{ ansible_env.HOME }}/.ghcup/bin/ghcup install cabal {{ cabal_version }} >> {{ log_file }} 2>&1"
+      shell: "{{ user_home }}/.ghcup/bin/ghcup install cabal {{ cabal_version }} >> {{ log_file }} 2>&1"
       args:
         executable: /bin/bash
 
     - name: Set Cabal as default
-      shell: "{{ ansible_env.HOME }}/.ghcup/bin/ghcup set cabal {{ cabal_version }} >> {{ log_file }} 2>&1"
+      shell: "{{ user_home }}/.ghcup/bin/ghcup set cabal {{ cabal_version }} >> {{ log_file }} 2>&1"
       args:
         executable: /bin/bash
 
@@ -147,7 +147,7 @@
 
     - name: Append environment variables to .bashrc
       blockinfile:
-        path: ~/.bashrc
+        path: "{{ user_home }}/.bashrc"
         marker: "# {mark} ANSIBLE-CARDANO-ENV"
         block: |
           export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
@@ -158,6 +158,6 @@
 
     - name: Create Cardano node home directory
       file:
-        path: "{{ ansible_env.HOME }}/cardano-my-node"
+        path: "{{ user_home }}/cardano-my-node"
         state: directory
         mode: '0755'
