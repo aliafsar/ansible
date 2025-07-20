@@ -1,6 +1,9 @@
 - name: Update and configure system
   hosts: localhost
   become: yes
+  vars_files:
+    - install_param.yml
+  
   tasks:
     - name: Update and upgrade APT packages
       apt:
