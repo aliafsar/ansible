@@ -60,17 +60,17 @@
         executable: /bin/bash
 
     - name: Set GHC as default
-      shell: ghcup set ghc {{ ghc_version }} >> {{ log_file }} 2>&1
+      shell: "{{ ansible_env.HOME }}/.ghcup/bin/ghcup set ghc {{ ghc_version }} >> {{ log_file }} 2>&1"
       args:
         executable: /bin/bash
 
     - name: Install Cabal
-      shell: ghcup install cabal {{ cabal_version }} >> {{ log_file }} 2>&1
+      shell: "{{ ansible_env.HOME }}/.ghcup/bin/ghcup install cabal {{ cabal_version }} >> {{ log_file }} 2>&1"
       args:
         executable: /bin/bash
 
     - name: Set Cabal as default
-      shell: ghcup set cabal {{ cabal_version }} >> {{ log_file }} 2>&1
+      shell: "{{ ansible_env.HOME }}/.ghcup/bin/ghcup set cabal {{ cabal_version }} >> {{ log_file }} 2>&1"
       args:
         executable: /bin/bash
 
