@@ -39,3 +39,121 @@
     - name: Set timezone to Europe/London
       timezone:
         name: Europe/London
+    - name: Install GHCup non-interactively
+      shell: |
+        curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 sh >> {{ log_file }} 2>&1
+      args:
+        executable: /bin/bash
+        creates: "{{ ansible_env.HOME }}/.ghcup"
+
+    - name: Source .bashrc to update PATH
+      shell: source ~/.bashrc
+      args:
+        executable: /bin/bash
+
+    - name: Install GHC
+      shell: ghcup install ghc {{ ghc_version }} >> {{ log_file }} 2>&1
+      args:
+        executable: /bin/bash
+
+    - name: Set GHC as default
+      shell: ghcup set ghc {{ ghc_version }} >> {{ log_file }} 2>&1
+      args:
+        executable: /bin/bash
+
+    - name: Install Cabal
+      shell: ghcup install cabal {{ cabal_version }} >> {{ log_file }} 2>&1
+      args:
+        executable: /bin/bash
+
+    - name: Set Cabal as default
+      shell: ghcup set cabal {{ cabal_version }} >> {{ log_file }} 2>&1
+      args:
+        executable: /bin/bash
+
+    - name: Clone libsodium
+      git:
+        repo: https://github.com/input-output-hk/libsodium
+        dest: /tmp/libsodium
+        version: dbb48cc
+
+    - name: Build and install libsodium
+      shell: |
+        ./autogen.sh && ./configure && make && sudo make install >> {{ log_file }} 2>&1
+      args:
+        chdir: /tmp/libsodium
+        executable: /bin/bash
+
+    - name: Clone secp256k1
+      git:
+        repo: https://github.com/bitcoin-core/secp256k1
+        dest: "{{ project_home }}/secp256k1"
+        version: v0.3.2
+        depth: 1
+
+    - name: Build and install secp256k1
+      shell: |
+        ./autogen.sh
+        ./configure --enable-module-schnorrsig --enable-experimental
+        make
+        make check
+        sudo make install
+        sudo ldconfig
+      args:
+        chdir: "{{ project_home }}/secp256k1"
+        executable: /bin/bash
+
+    - name: Clone blst
+      git:
+        repo: https://github.com/supranational/blst
+        dest: "{{ project_home }}/blst"
+        version: v0.3.11
+
+    - name: Build blst
+      shell: ./build.sh >> {{ log_file }} 2>&1
+      args:
+        chdir: "{{ project_home }}/blst"
+        executable: /bin/bash
+
+    - name: Create libblst.pc
+      copy:
+        dest: "{{ project_home }}/blst/libblst.pc"
+        content: |
+          prefix=/usr/local
+          exec_prefix=${prefix}
+          libdir=${exec_prefix}/lib
+          includedir=${prefix}/include
+
+          Name: libblst
+          Description: Multilingual BLS12-381 signature library
+          URL: https://github.com/supranational/blst
+          Version: 0.3.11
+          Cflags: -I${includedir}
+          Libs: -L${libdir} -lblst
+
+    - name: Deploy blst files
+      shell: |
+        sudo cp libblst.pc /usr/local/lib/pkgconfig/
+        sudo cp bindings/blst_aux.h bindings/blst.h bindings/blst.hpp /usr/local/include/
+        sudo cp libblst.a /usr/local/lib
+        sudo chmod u=rw,go=r /usr/local/{lib/{libblst.a,pkgconfig/libblst.pc},include/{blst.{h,hpp},blst_aux.h}}
+      args:
+        chdir: "{{ project_home }}/blst"
+        executable: /bin/bash
+
+    - name: Append environment variables to .bashrc
+      blockinfile:
+        path: ~/.bashrc
+        marker: "# {mark} ANSIBLE-CARDANO-ENV"
+        block: |
+          export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+          export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+          export NODE_HOME="$HOME/cardano-my-node"
+          export NODE_CONFIG="mainnet"
+          export CARDANO_NODE_SOCKET_PATH="$NODE_HOME/db/socket"
+
+    - name: Create Cardano node home directory
+      file:
+        path: "{{ ansible_env.HOME }}/cardano-my-node"
+        state: directory
+        mode: '0755'

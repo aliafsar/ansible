@@ -1,0 +1,9 @@
+# Version numbers
+ghc_version: "9.6.7"
+cabal_version: "3.12.1.0"
+
+# Log file for shell command output
+log_file: "{{ ansible_env.HOME }}/ansible-install.log"
+
+# Project root for source builds
+project_home: "{{ ansible_env.HOME }}/git"
