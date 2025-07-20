@@ -55,7 +55,7 @@
         executable: /bin/bash
 
     - name: Install GHC
-      shell: ghcup install ghc {{ ghc_version }} >> {{ log_file }} 2>&1
+      shell: "{{ ansible_env.HOME }}/.ghcup/bin/ghcup install ghc {{ ghc_version }} >> {{ log_file }} 2>&1"
       args:
         executable: /bin/bash
 
