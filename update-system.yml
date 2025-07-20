@@ -12,6 +12,32 @@
         autoremove: yes
         autoclean: yes
 
+    - name: Install required packages
+      apt:
+        name:
+          - autoconf
+          - automake
+          - build-essential
+          - curl
+          - g++
+          - git
+          - jq
+          - libffi-dev
+          - libgmp-dev
+          - libncursesw5
+          - libssl-dev
+          - libsystemd-dev
+          - libtinfo-dev
+          - libtool
+          - make
+          - pkg-config
+          - tmux
+          - wget
+          - zlib1g-dev
+          - liblmdb-dev
+        state: present
+        update_cache: yes
+
     - name: Install chrony
       apt:
         name: chrony
@@ -42,6 +68,7 @@
     - name: Set timezone to Europe/London
       timezone:
         name: Europe/London
+
     - name: Install GHCup non-interactively
       shell: |
         curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 sh >> {{ log_file }} 2>&1
@@ -101,11 +128,12 @@
         ./configure --enable-module-schnorrsig --enable-experimental
         make
         make check
-        sudo make install
-        sudo ldconfig
+        make install
+        ldconfig
       args:
         chdir: "{{ project_home }}/secp256k1"
         executable: /bin/bash
+      become: yes
 
     - name: Clone blst
       git:
@@ -118,6 +146,7 @@
       args:
         chdir: "{{ project_home }}/blst"
         executable: /bin/bash
+      become: yes
 
     - name: Create libblst.pc
       copy:
@@ -137,13 +166,14 @@
 
     - name: Deploy blst files
       shell: |
-        sudo cp libblst.pc /usr/local/lib/pkgconfig/
-        sudo cp bindings/blst_aux.h bindings/blst.h bindings/blst.hpp /usr/local/include/
-        sudo cp libblst.a /usr/local/lib
-        sudo chmod u=rw,go=r /usr/local/{lib/{libblst.a,pkgconfig/libblst.pc},include/{blst.{h,hpp},blst_aux.h}}
+        cp libblst.pc /usr/local/lib/pkgconfig/
+        cp bindings/blst_aux.h bindings/blst.h bindings/blst.hpp /usr/local/include/
+        cp libblst.a /usr/local/lib
+        chmod u=rw,go=r /usr/local/{lib/{libblst.a,pkgconfig/libblst.pc},include/{blst.{h,hpp},blst_aux.h}}
       args:
         chdir: "{{ project_home }}/blst"
         executable: /bin/bash
+      become: yes
 
     - name: Append environment variables to .bashrc
       blockinfile:
@@ -161,3 +191,21 @@
         path: "{{ user_home }}/cardano-my-node"
         state: directory
         mode: '0755'
+
+    - name: Get GHC version
+      shell: "{{ user_home }}/.ghcup/bin/ghc --version"
+      register: ghc_version_output
+      changed_when: false
+
+    - name: Display GHC version
+      debug:
+        msg: "{{ ghc_version_output.stdout }}"
+
+    - name: Get Cabal version
+      shell: "{{ user_home }}/.ghcup/bin/cabal --version"
+      register: cabal_version_output
+      changed_when: false
+
+    - name: Display Cabal version
+      debug:
+        msg: "{{ cabal_version_output.stdout_lines[0] }}"  
