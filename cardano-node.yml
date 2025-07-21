@@ -6,7 +6,7 @@
 
   tasks:
     - name: Remove libsodium-dev if present
-      # To ensure that development headers for the libsodium cryptographic library are NOT install
+      # To ensure that development headers for the libsodium cryptographic library are NOT installed
       apt:
         name: libsodium-dev
         state: absent
@@ -30,30 +30,42 @@
         chdir: "{{ user_home }}/git/cardano-node"
         executable: /bin/bash
 
-    - name: Show which release tag was checked out
+    - name: Checkout latest cardano-node release tag
       shell: |
-        curl -s https://api.github.com/repos/IntersectMBO/cardano-node/releases/latest | jq -r .tag_name
-      register: latest_cardano_tag
+        latest_tag=$(curl -s https://api.github.com/repos/IntersectMBO/cardano-node/releases/latest | jq -r .tag_name)
+        git checkout "$latest_tag"
       args:
         chdir: "{{ user_home }}/git/cardano-node"
         executable: /bin/bash
-        warn: false
 
     - name: Cabal update
-      shell: export PATH="$PATH:{{ user_home }}/.ghcup/bin" && cabal update
+      shell: cabal update
       args:
         chdir: "{{ user_home }}/git/cardano-node"
         executable: /bin/bash
       become: false
-      
+
+    - name: Cabal configure for build
+      shell: cabal configure -O0 -w ghc-{{ ghc_version }}
+      args:
+        chdir: "{{ user_home }}/git/cardano-node"
+        executable: /bin/bash
+      become: false
+
     - name: Cabal build all
-      shell: export PATH="$PATH:{{ user_home }}/.ghcup/bin" && cabal build all
+      shell: cabal build all
       args:
         chdir: "{{ user_home }}/git/cardano-node"
         executable: /bin/bash
       become: false
 
-
+    - name: Cabal build cardano-cli
+      shell: cabal build cardano-cli
+      args:
+        chdir: "{{ user_home }}/git/cardano-node"
+        executable: /bin/bash
+      become: false
+    
     - name: Copy cardano-node binary to /usr/local/bin
       shell: cp -p "$(./scripts/bin-path.sh cardano-node)" /usr/local/bin/cardano-node
       args:
