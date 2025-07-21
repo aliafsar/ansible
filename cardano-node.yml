@@ -37,6 +37,7 @@
       args:
         chdir: "{{ user_home }}/git/cardano-node"
         executable: /bin/bash
+        warn: false
 
     - name: Cabal update
       shell: export PATH="$PATH:{{ user_home }}/.ghcup/bin" && cabal update
