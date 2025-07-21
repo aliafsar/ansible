@@ -1,6 +1,5 @@
 - name: Setup Cardano Node
   hosts: localhost
-  become: yes
   vars_files:
     - install_param.yml
 
