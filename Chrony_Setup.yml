@@ -63,6 +63,15 @@
       debug:
         var: ansible_facts.services['chrony.service']
 
+    - name: Display current system timezone
+      command: timedatectl show --property=Timezone --value
+      register: tz
+      changed_when: false
+
+    - name: Show system timezone
+      debug:
+        msg: "Current system timezone: {{ tz.stdout }}"
+
   handlers:
     - name: Restart chrony
       service:

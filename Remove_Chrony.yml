@@ -7,7 +7,7 @@
       service:
         name: chrony
         state: stopped
-      failed_when: false
+      ignore_errors: yes
 
     - name: Uninstall chrony package
       apt:
