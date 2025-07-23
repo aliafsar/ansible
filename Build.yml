@@ -5,3 +5,4 @@
 - import_playbook: steps/05-secp256k1_Install.yml
 - import_playbook: steps/06-blst_Install.yml
 - import_playbook: steps/07-Update_Env_File.yml
+- import_playbook: steps/08-Install_Cardano_Node.yml
