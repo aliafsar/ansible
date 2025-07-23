@@ -1,7 +1,7 @@
 - name: Remove_Cardano_Node
   hosts: localhost
   vars_files:
-    - ../install_param.yml
+    - uninstall_param.yml
 
   tasks:
     # - name: DEBUG user_home
