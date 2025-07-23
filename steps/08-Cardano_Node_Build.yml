@@ -43,8 +43,7 @@
         url: "https://github.com/IntersectMBO/cardano-node/releases/download/{{ cardano_node_version }}/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
         dest: "{{ user_home }}/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
         mode: '0644'
-      args:
-        creates: "{{ user_home }}/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
+        force: yes
 
     - name: Extract downloaded binary archive
       when: install_method == "download"
