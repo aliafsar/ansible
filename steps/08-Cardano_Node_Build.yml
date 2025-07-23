@@ -41,7 +41,7 @@
       when: install_method == "download"
       get_url:
         url: "https://github.com/IntersectMBO/cardano-node/releases/download/{{ cardano_node_version }}/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
-        dest: "{{ user_home }}/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
+        dest: "{{ user_home }}/git/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
         mode: '0644'
         force: yes
 

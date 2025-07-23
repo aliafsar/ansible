@@ -1,4 +1,4 @@
-- name: Undo Cardano Node Setup
+- name: Remove_Cardano_Node
   hosts: localhost
   vars_files:
     - ../install_param.yml
