@@ -11,22 +11,10 @@
         marker: "# {mark} ANSIBLE-CARDANO-ENV"
         state: absent
 
-    # Remove Cardano node home directory (no root needed)
-    - name: Remove Cardano node home directory
-      file:
-        path: "{{ user_home }}/cardano-my-node"
-        state: absent
-
     # Remove GHCup directory (no root needed)
     - name: Remove GHCup and installed binaries
       file:
         path: "{{ user_home }}/.ghcup"
-        state: absent
-
-    # Remove user git build directories (no root needed)
-    - name: Remove git build directories
-      file:
-        path: "{{ user_home }}/git"
         state: absent
 
     # The following tasks require root privileges!
