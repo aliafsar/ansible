@@ -4,9 +4,9 @@
     - install_param.yml
 
   tasks:
-    - name: DEBUG user_home
-      debug:
-        var: user_home
+    # - name: DEBUG user_home
+    #   debug:
+    #     var: user_home
 
     - name: Remove Cardano node binary from /usr/local/bin
       become: yes
