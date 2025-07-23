@@ -41,9 +41,6 @@
         path: "{{ user_home }}/cardano-my-node"
       register: my_node_check
 
-    - debug:
-        var: my_node_check
-
     - name: Remove cardano-my-node directory
       file:
         path: "{{ user_home }}/cardano-my-node"
