@@ -45,22 +45,29 @@
         mode: '0644'
         force: yes
 
+    - name: Ensure cardano-binary directory exists
+      file:
+        path: "{{ user_home }}/cardano-binary"
+        state: directory
+        mode: '0755'
+
     - name: Extract downloaded binary archive
       when: install_method == "download"
       unarchive:
         src: "{{ user_home }}/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
-        dest: "{{ user_home }}/cardano-node-{{ cardano_node_version }}"
+        dest: "{{ user_home }}/cardano-binary"
         remote_src: yes
 
     - name: Move binaries to /usr/local/bin
       when: install_method == "download"
       become: yes
       shell: |
-        mv {{ user_home }}/cardano-node-{{ cardano_node_version }}/cardano-node /usr/local/bin/
-        mv {{ user_home }}/cardano-node-{{ cardano_node_version }}/cardano-cli /usr/local/bin/
+        mv {{ user_home }}/cardano-binary/cardano-node /usr/local/bin/
+        mv {{ user_home }}/cardano-binary/cardano-cli /usr/local/bin/
       args:
         executable: /bin/bash
         creates: /usr/local/bin/cardano-node
+
 
     # ------------------------------
     # Option 2: Build from source
