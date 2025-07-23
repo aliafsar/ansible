@@ -36,13 +36,18 @@
         path: "{{ user_home }}/git/cardano-binary"
         state: absent
 
-    - name: DEBUG check if cardano-my-node exists before deletion
+    - name: Remove cardano-my-node directory
+      file:
+        path: "{{ user_home }}/cardano-my-node"
+        state: absent
+
+    - name: Check if cardano-my-node is gone after deletion
       stat:
         path: "{{ user_home }}/cardano-my-node"
-      register: my_node_dir
+      register: post_delete_my_node_dir
 
     - debug:
-        var: my_node_dir
+        var: post_delete_my_node_dir
 
     - name: Remove cloned cardano-node git repo
       file:
