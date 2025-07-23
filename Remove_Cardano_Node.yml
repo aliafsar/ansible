@@ -16,11 +16,11 @@
         state: absent
       become: yes
 
-    - name: Remove downloaded binary archive
-      file:
-        path: "{{ user_home }}/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
-        state: absent
-      when: install_method == "download"
+    # - name: Remove downloaded binary archive
+    #   file:
+    #     path: "{{ user_home }}/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
+    #     state: absent
+    #   when: install_method == "download"
 
     - name: Remove extracted binary directory
       file:
