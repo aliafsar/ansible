@@ -1,7 +1,7 @@
 - name: Update and configure system
   hosts: localhost
   vars_files:
-    - install_param.yml
+    - ../install_param.yml
   
   tasks:
     - name: Append environment variables to .bashrc

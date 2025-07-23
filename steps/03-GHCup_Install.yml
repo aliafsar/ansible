@@ -1,7 +1,7 @@
 - name: 03-GHCup_Install
   hosts: localhost
   vars_files:
-    - install_param.yml
+    - ../install_param.yml
   
   tasks:
     - name: Install GHCup non-interactively

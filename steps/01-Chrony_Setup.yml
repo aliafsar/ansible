@@ -2,7 +2,7 @@
   hosts: localhost
   become: yes
   vars_files:
-    - install_param.yml
+    - ../install_param.yml
 
   tasks:
     - name: Update and upgrade APT packages
