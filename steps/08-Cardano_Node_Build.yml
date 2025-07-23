@@ -54,7 +54,7 @@
     - name: Extract downloaded binary archive
       when: install_method == "download"
       unarchive:
-        src: "{{ user_home }}/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
+        src: "{{ user_home }}/git/cardano-node-{{ cardano_node_version }}-linux.tar.gz"
         dest: "{{ user_home }}/git/cardano-binary"
         remote_src: yes
 
