@@ -1,0 +1,73 @@
+- name: Remove Cardano node install (Steps 1–7)
+  hosts: localhost
+  vars_files:
+    - install_param.yml
+
+  tasks:
+    # Remove environment block from .bashrc (no root needed)
+    - name: Remove Cardano environment variables from .bashrc
+      blockinfile:
+        path: "{{ user_home }}/.bashrc"
+        marker: "# {mark} ANSIBLE-CARDANO-ENV"
+        state: absent
+
+    # Remove Cardano node home directory (no root needed)
+    - name: Remove Cardano node home directory
+      file:
+        path: "{{ user_home }}/cardano-my-node"
+        state: absent
+
+    # Remove GHCup directory (no root needed)
+    - name: Remove GHCup and installed binaries
+      file:
+        path: "{{ user_home }}/.ghcup"
+        state: absent
+
+    # Remove user git build directories (no root needed)
+    - name: Remove git build directories
+      file:
+        path: "{{ user_home }}/git"
+        state: absent
+
+    # The following tasks require root privileges!
+    - name: Remove installed libsodium (requires root)
+      file:
+        path: "/usr/local/lib/libsodium.a"
+        state: absent
+      become: yes
+
+    - name: Remove installed secp256k1 (requires root)
+      file:
+        path: "/usr/local/lib/libsecp256k1.a"
+        state: absent
+      become: yes
+
+    - name: Remove installed blst (requires root)
+      file:
+        path: "/usr/local/lib/libblst.a"
+        state: absent
+      become: yes
+
+    - name: Remove blst pkgconfig (requires root)
+      file:
+        path: "/usr/local/lib/pkgconfig/libblst.pc"
+        state: absent
+      become: yes
+
+    - name: Remove blst header (requires root)
+      file:
+        path: "/usr/local/include/blst.h"
+        state: absent
+      become: yes
+
+    - name: Remove blst hpp (requires root)
+      file:
+        path: "/usr/local/include/blst.hpp"
+        state: absent
+      become: yes
+
+    - name: Remove blst aux header (requires root)
+      file:
+        path: "/usr/local/include/blst_aux.h"
+        state: absent
+      become: yes
